@@ -2,20 +2,20 @@ const express = require('express')
 const router = express.Router()
 const { ensureAuth } = require('../middleware/auth')
 
-const Story = require('../models/Story')
+const Entity = require('../models/Entity')
 
 // @desc    Show add page
-// @route   GET /stories/add
+// @route   GET /entities/add
 router.get('/add', ensureAuth, (req, res) => {
-  res.render('stories/add')
+  res.render('entities/add')
 })
 
 // @desc    Process add form
-// @route   POST /stories
+// @route   POST /entities
 router.post('/', ensureAuth, async (req, res) => {
   try {
     req.body.user = req.user.id
-    await Story.create(req.body)
+    await Entity.create(req.body)
     res.redirect('/dashboard')
   } catch (err) {
     console.error(err)
@@ -23,17 +23,17 @@ router.post('/', ensureAuth, async (req, res) => {
   }
 })
 
-// @desc    Show all stories
-// @route   GET /stories
+// @desc    Show all entities
+// @route   GET /entities
 router.get('/', ensureAuth, async (req, res) => {
   try {
-    const stories = await Story.find({ status: 'public' })
+    const entities = await Entity.find({ status: 'public' })
       .populate('user')
       .sort({ createdAt: 'desc' })
       .lean()
 
-    res.render('stories/index', {
-      stories,
+    res.render('entities/index', {
+      entities,
     })
   } catch (err) {
     console.error(err)
@@ -41,21 +41,21 @@ router.get('/', ensureAuth, async (req, res) => {
   }
 })
 
-// @desc    Show single story
-// @route   GET /stories/:id
+// @desc    Show single entity
+// @route   GET /entities/:id
 router.get('/:id', ensureAuth, async (req, res) => {
   try {
-    let story = await Story.findById(req.params.id).populate('user').lean()
+    let entity = await Entity.findById(req.params.id).populate('user').lean()
 
-    if (!story) {
+    if (!entity) {
       return res.render('error/404')
     }
 
-    if (story.user._id != req.user.id && story.status == 'private') {
+    if (entity.user._id != req.user.id && entity.status == 'private') {
       res.render('error/404')
     } else {
-      res.render('stories/show', {
-        story,
+      res.render('entities/show', {
+        entity,
       })
     }
   } catch (err) {
@@ -65,22 +65,22 @@ router.get('/:id', ensureAuth, async (req, res) => {
 })
 
 // @desc    Show edit page
-// @route   GET /stories/edit/:id
+// @route   GET /entities/edit/:id
 router.get('/edit/:id', ensureAuth, async (req, res) => {
   try {
-    const story = await Story.findOne({
+    const entity = await Entity.findOne({
       _id: req.params.id,
     }).lean()
 
-    if (!story) {
+    if (!entity) {
       return res.render('error/404')
     }
 
-    if (story.user != req.user.id) {
-      res.redirect('/stories')
+    if (entity.user != req.user.id) {
+      res.redirect('/entities')
     } else {
-      res.render('stories/edit', {
-        story,
+      res.render('entities/edit', {
+        entity,
       })
     }
   } catch (err) {
@@ -89,20 +89,20 @@ router.get('/edit/:id', ensureAuth, async (req, res) => {
   }
 })
 
-// @desc    Update story
-// @route   PUT /stories/:id
+// @desc    Update entity
+// @route   PUT /entities/:id
 router.put('/:id', ensureAuth, async (req, res) => {
   try {
-    let story = await Story.findById(req.params.id).lean()
+    let entity = await Entity.findById(req.params.id).lean()
 
-    if (!story) {
+    if (!entity) {
       return res.render('error/404')
     }
 
-    if (story.user != req.user.id) {
-      res.redirect('/stories')
+    if (entity.user != req.user.id) {
+      res.redirect('/entities')
     } else {
-      story = await Story.findOneAndUpdate({ _id: req.params.id }, req.body, {
+      entity = await Entity.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,
         runValidators: true,
       })
@@ -115,20 +115,20 @@ router.put('/:id', ensureAuth, async (req, res) => {
   }
 })
 
-// @desc    Delete story
-// @route   DELETE /stories/:id
+// @desc    Delete entity
+// @route   DELETE /entities/:id
 router.delete('/:id', ensureAuth, async (req, res) => {
   try {
-    let story = await Story.findById(req.params.id).lean()
+    let entity = await Entity.findById(req.params.id).lean()
 
-    if (!story) {
+    if (!entity) {
       return res.render('error/404')
     }
 
-    if (story.user != req.user.id) {
-      res.redirect('/stories')
+    if (entity.user != req.user.id) {
+      res.redirect('/entities')
     } else {
-      await Story.remove({ _id: req.params.id })
+      await Entity.remove({ _id: req.params.id })
       res.redirect('/dashboard')
     }
   } catch (err) {
@@ -137,19 +137,19 @@ router.delete('/:id', ensureAuth, async (req, res) => {
   }
 })
 
-// @desc    User stories
-// @route   GET /stories/user/:userId
+// @desc    User entities
+// @route   GET /entities/user/:userId
 router.get('/user/:userId', ensureAuth, async (req, res) => {
   try {
-    const stories = await Story.find({
+    const entities = await Entity.find({
       user: req.params.userId,
       status: 'public',
     })
       .populate('user')
       .lean()
 
-    res.render('stories/index', {
-      stories,
+    res.render('entities/index', {
+      entities,
     })
   } catch (err) {
     console.error(err)
