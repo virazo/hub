@@ -1,21 +1,27 @@
-<h6>Dashboard</h6>
-<h3>Welcome {{name}}</h3>
-<p>Here are your entities</p>
-{{#if entities}}
 <table class="striped">
     <thead>
         <tr>
             <th>Title</th>
             <th>Date</th>
+            <th>Shared</th>
             <th>Status</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>Filterhere</td>
+            <td>Filterhere</td>
+            <td>Filterhere</td>
+            <td>Filterhere</td>
             <th></th>
         </tr>
     </thead>
     <tbody>
+        {{#if entities}}
         {{#each entities}}
         <tr>
             <td><a href="/entities/{{_id}}">{{title}}</a></td>
             <td>{{formatDate createdAt 'MMMM Do YYYY, h:mm:ss a'}}</td>
+            <td><span class="dash-shared">{{shared}}</span></td>
             <td><span class="dash-status">{{status}}</span></td>
             <td>
                 <a href="/entities/edit/{{_id}}" class="btn btn-float">
@@ -31,8 +37,10 @@
             </td>
         </tr>
         {{/each}}
+        {{else}}
+        <tr>
+            <td>No entities</td>
+        </tr>
+        {{/if}}
     </tbody>
 </table>
-{{else}}
-<p>You have not created any entities</p>
-{{/if}}

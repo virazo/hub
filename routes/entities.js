@@ -27,7 +27,7 @@ router.post('/', ensureAuth, async (req, res) => {
 // @route   GET /entities
 router.get('/', ensureAuth, async (req, res) => {
   try {
-    const entities = await Entity.find({ status: 'public' })
+    const entities = await Entity.find({ shared: 'public' })
       .populate('user')
       .sort({ createdAt: 'desc' })
       .lean()
@@ -51,7 +51,7 @@ router.get('/:id', ensureAuth, async (req, res) => {
       return res.render('error/404')
     }
 
-    if (entity.user._id != req.user.id && entity.status == 'private') {
+    if (entity.user._id != req.user.id && entity.shared == 'private') {
       res.render('error/404')
     } else {
       res.render('entities/show', {
@@ -143,7 +143,7 @@ router.get('/user/:userId', ensureAuth, async (req, res) => {
   try {
     const entities = await Entity.find({
       user: req.params.userId,
-      status: 'public',
+      shared: 'public',
     })
       .populate('user')
       .lean()

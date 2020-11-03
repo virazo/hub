@@ -11,13 +11,43 @@
 
         <div class="row">
             <div class="input-field">
-                <select id="status" name="status">
-                    {{#select entity.status}}
+                <select id="shared" name="shared">
+                    {{#select entity.shared}}
                     <option value="public" selected>Public</option>
                     <option value="private">Private</option>
-                    {{/select}}
+                    {{/select}} 
+                </select>
+                <label for="shared">Shared</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field">
+                <select id="status" name="status">
+                    {{#select entity.status}}
+                    <option value="0. Active">0. Active</option>
+                    <option value="1. Respond">1. Respond</option>
+                    <option value="2. Waiting" >2. Waiting</option>
+                    <option value="3. Hold" >3. Hold</option>
+                    <option value="4. Evaluate" >4. Evaluate</option>
+                    <option value="5. Cancelled" >5. Cancelled</option>
+                    <option value="6. Completed" >6. Completed</option>
+                    {{/select}} 
                 </select>
                 <label for="status">Status</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field">
+                <select multiple id="relationships" name="relationships">
+                    {{#select entity.relationships}}
+                        {{#each entities}}
+                            <option value="{{_id}}">{{_id}} {{title}}</option>
+                        {{/each}}
+                    {{/select}} 
+                </select>
+                <label for="relationships">Relationships</label>
             </div>
         </div>
 
